@@ -1,17 +1,18 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0dev'
+version = '2.1dev'
 
 setup(name='silva.searchandreplace',
       version=version,
       description="Search in all Silva Documents and replace information",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
+        "Framework :: Zope2",
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
+        "License :: OSI Approved :: BSD License",
         ],
       keywords='silva silvadocument search replace service',
       author='Guido Wesdorp',
@@ -23,10 +24,7 @@ setup(name='silva.searchandreplace',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          'setuptools',
-          # -*- Extra requirements: -*-
-      ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
+        'setuptools',
+        'lxml',
+        ],
       )
