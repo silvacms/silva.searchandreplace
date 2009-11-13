@@ -1,22 +1,25 @@
 # -*- coding: utf-8 -*-
-
 # Copyright (c) 2009 Infrae. All rights reserved.
 # See also LICENSE.txt
 # $Id: test_SearchReplaceService.py 32946 2009-01-12 16:26:47Z sylvain $
 
-import unittest
-from Products.Silva.tests import SilvaTestCase
-
-from xml.dom.minidom import parseString
-
-import StringIO
 from lxml import etree
+from xml.dom.minidom import parseString
+import StringIO
+import unittest
+
+from Products.Five import zcml
+from Products.Silva.tests import SilvaTestCase
+from Testing.ZopeTestCase.layer import onsetup as ZopeLiteLayerSetup
+from Testing.ZopeTestCase import installPackage
+
 
 class ServiceSearchReplaceTestCase(SilvaTestCase.SilvaTestCase):
+
     def afterSetUp(self):
-        self.service_search_replace = self.addObject(
-            self.getRoot(), 'ServiceSearchReplace', 'service_search_replace',
-            'Silva')
+        factory = self.root.manage_addProduct['silva.searchandreplace']
+        factory.manage_addServiceSearchReplace('service_search_replace')
+        self.service = getattr(self.root, 'service_search_replace')
 
         for id, title, content in (
                 ('foo', 'Foo',
@@ -26,24 +29,23 @@ class ServiceSearchReplaceTestCase(SilvaTestCase.SilvaTestCase):
                 ('spam_eggs', 'Spam and eggs',
                  '<doc><p type="normal">Spam and eggs</p></doc>')):
             doc = self.addObject(
-                self.getRoot(), 'Document', id, 'SilvaDocument', title=title)
+                self.root, 'Document', id, 'SilvaDocument', title=title)
             doc.get_editable().content.manage_edit(content)
 
-
     def test_setup(self):
-        self.assert_(self.service_search_replace)
+        self.assert_(self.service)
 
     def assertOccurrenceMatches(
             self, xml, query, ignore_case, targets, expected):
         dom = parseString(xml)
-        self.assertEquals(self.service_search_replace._count_or_replace(
+        self.assertEquals(self.service._count_or_replace(
             dom, query, None, ignore_case, targets), expected)
 
     def assertOccurrenceReplaced(
             self, xml, query, replacement, ignore_case, targets,
             expected_occurrences, expected_result):
         dom = parseString(xml)
-        occurrences = self.service_search_replace._count_or_replace(
+        occurrences = self.service._count_or_replace(
             dom, query, replacement, ignore_case, targets)
         self.assertEquals(occurrences, expected_occurrences)
         self.assertEquals(
@@ -59,12 +61,12 @@ class ServiceSearchReplaceTestCase(SilvaTestCase.SilvaTestCase):
         return s.getvalue()
 
     def test__perform_search_no_results(self):
-        results = self.service_search_replace._perform_search(
+        results = self.service._perform_search(
             'thisisnotinthetext', self.getRoot(), False, ['text'])[-1]
         self.assertEquals(len(results), 0)
 
     def test__perform_search_case_sensitive(self):
-        results = self.service_search_replace._perform_search(
+        results = self.service._perform_search(
             'spam', self.getRoot(), False, ['text'])[-1]
         self.assertEquals(len(results), 1)
 
@@ -190,7 +192,18 @@ class ServiceSearchReplaceTestCase(SilvaTestCase.SilvaTestCase):
             ['urls'], 0, '<doc><image path="ftp://foo.com"/></doc>')
 
 
+@ZopeLiteLayerSetup
+def installService():
+    installPackage('silva.searchandreplace')
+
+    # Load our ZCML, which add the extension as a Product
+    from silva import searchandreplace
+    zcml.load_config('configure.zcml', searchandreplace)
+
+
 def test_suite():
+    installService()
+
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(ServiceSearchReplaceTestCase))
     return suite

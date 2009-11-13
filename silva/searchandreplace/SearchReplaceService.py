@@ -1,6 +1,7 @@
 import re
 
 from AccessControl import ClassSecurityInfo
+from Acquisition import aq_base
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
@@ -17,7 +18,7 @@ class FindRootError(Exception):
 
 class ServiceSearchReplace(SimpleItem):
     security = ClassSecurityInfo()
-    #implements(IServicePolls)
+
     meta_type = 'Silva Search and Replace Service'
 
     manage_options = (
@@ -297,7 +298,7 @@ class ServiceSearchReplace(SimpleItem):
         if replaced:
             content._p_changed = True
             # XXX I assume this should always be done?
-            if hasattr(content.aq_base, 'reindex_object'):
+            if hasattr(aq_base(content), 'reindex_object'):
                 content.reindex_object()
         return occurrences
 
