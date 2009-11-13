@@ -1,0 +1,179 @@
+<!--
+Copyright (c) 2002-2009 Infrae. All rights reserved.
+See also LICENSE.txt
+Version of this file: $Revision: 1.7 $
+-->
+
+<tal:block define="dummy python: here.REQUEST.RESPONSE.setHeader('Content-Type', 'text/html;; charset=UTF-8')" />
+<tal:init define="global management_page_charset string:utf8" />
+
+<h1 tal:replace="structure here/manage_page_header">Header</h1>
+
+<h2 tal:define="manage_tabs_message options/manage_tabs_message | nothing"
+    tal:replace="structure here/manage_tabs">Tabs</h2>
+
+<h4><a href="../manage_services">Silva Services</a></h4>
+<h4><a href="manage_editForm">Refresh</a></h4>
+
+<h2>
+  Manage Search and Replace Service
+</h2>
+
+<form action="." method="post" class="form-text"
+      tal:define="batch options/batch | nothing;
+                  batch_size python:int(request.get('batch_size', 200))">
+
+<div tal:condition="options/search_performed | nothing">
+<h3>Search results for '<tal:block tal:replace="request/query" />'</h3>
+<p>Total number of objects processed: <tal:block replace="options/processed" />, occurrences: <tal:block replace="options/occurrences" /></p>
+</div>
+
+<div tal:condition="python: not options.get('search_performed') or not options.get('occurrences')">
+<h3>Perform search</h3>
+<table width="700">
+  <tbody>
+    <tr>
+      <td valign="top" width="300">
+        <div class="form-label">Search query:</div>
+        <div class="form-element">
+          <input type="text" name="query" tal:attributes="value request/query | nothing" />
+        </div>
+      </td>
+      <td class="form-text" valign="top">
+        Enter the text to search for.
+      </td>
+    </tr>
+    <!--
+    <tr>
+      <td valign="top" width="300">
+        <div class="form-label">Replacement:</div>
+        <div class="form-element">
+          <input type="text" name="replacement" />
+        </div>
+      </td>
+      <td class="form-text" valign="top">
+        Enter the text to replace any found instances of 'query' (previous field) with.
+      </td>
+    </tr>
+    -->
+    <tr>
+      <td valign="top" width="300">
+        <div class="form-label">Search root:</div>
+        <div class="form-element">
+          <input type="text" name="root" tal:attributes="value request/root | nothing" />
+        </div>
+      </td>
+      <td class="form-text" valign="top">
+        The root of the publication or folder to start the search. Leave empty to search the whole Silva instance.
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="300">
+        <div class="form-label">Case sensitivity:</div>
+        <div class="form-element">
+          <input type="checkbox" name="ignore_case" value="yes" />Ignore case<br />
+        </div>
+      </td>
+      <td class="form-text" valign="top">
+        Controls whether case is ignored. When checked, the search is case-insensitive - this is usually not a good idea, since the replacement case is applied as entered in the 'replacement' box on the next page, so it may yield undesired results such as a lowercase character at the beginning of a sentence, or uppercase characters in paths, etc., so use with care!
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="300">
+        <div class="form-label">Batch size:</div>
+        <div class="form-element">
+          <input type="text" name="batch_size" tal:attributes="value batch_size" /><br />
+        </div>
+      </td>
+      <td class="form-text" valign="top">
+        The amount of results displayed on the search results page. If there are more results than this, they are displayed on seperate pages.
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="300">
+        <div class="form-label">Search targets:</div>
+        <div class="form-element">
+          <input type="checkbox" name="search_targets:list" value="text" checked="checked" />Text contents (displayed text and title attributes)<br />
+          <input type="checkbox" name="search_targets:list" value="urls" />External links (XML path, link and url attributes)<br />
+          <input type="checkbox" name="search_targets:list" value="paths" />Paths (XML path, link and url attributes)<br />
+        </div>
+      </td>
+      <td class="form-text" valign="top">
+        Controls what parts of objects are searched - 'text' makes that all displayed text, including XML attributes that are displayed to the user, are searched and replaced, 'paths' makes that all <em>internal</em> paths in XML attributes of images and paths (path, url, link) are searched and replaced, 'urls' makes that all <em>external</em> URLs in XML attributes of links (iow URLs to external web pages, email URLs, etc.) are searched and replaced.
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" valign="top">
+        <input type="submit" name="manage_performSearch:method" value="Perform search" class="form-element" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div tal:condition="python: options.get('search_performed') and options.get('occurrences')">
+<h3>Occurrences</h3>
+<table width="700">
+  <tbody>
+    <tr>
+      <th>&#xa0;</th>
+      <th>path</th>
+      <th>title</th>
+      <th>state</th>
+      <th>occurrences</th>
+    </tr>
+    <tr tal:repeat="result options/batch">
+      <td><input type="checkbox" name="paths:list" tal:attributes="value result/path" /></td>
+      <td><a tal:attributes="href string:${result/url}/edit" tal:content="result/path"></a></td>
+      <td><a tal:attributes="href string:${result/url}" tal:content="result/title"></a></td>
+      <td><a tal:attributes="href string:${result/url}/tab_access" tal:content="result/state"></a></td>
+      <td tal:content="result/occurrences" />
+    </tr>
+    <tr>
+      <td colspan="5">
+        <input type="checkbox" onchange="var cbs = document.getElementsByName('paths:list'); for (var i=0; i < cbs.length; i++) {cbs[i].checked = this.checked ? 'checked' : false}" /> check/uncheck all
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4">
+        <a tal:condition="python:int(request.get('batch_start', 0)) > 0" tal:attributes="href python:'manage_performSearchBatch?batch_start=%s&query=%s' % (int(request['batch_start']) - batch_size, request['query'])">previous page</a>
+        <span tal:condition="python:int(request.get('batch_start', 0)) <= 0">&nbsp;</span>
+      </td>
+      <td style="text-align: right">
+        <a tal:condition="python:batch.first < len(options['results']) - batch.length" tal:attributes="href python:'manage_performSearchBatch?batch_start=%s&query=%s' % (batch.first + batch_size, request['query'])">next page</a>
+        <span tal:condition="python:batch.first >= len(options['results']) - batch.length">&nbsp;</span>
+      <td>
+    </tr>
+  </tfoot>
+</table>
+
+<h3>Replace</h3>
+<table width="700">
+  <tbody>
+    <tr>
+      <td valign="top" width="300">
+        <div class="form-label">Replacement string:</div>
+        <div class="form-element">
+          <input type="hidden" name="query" tal:attributes="value request/query" />
+          <input type="text" name="replacement" tal:attributes="value request/query" />
+        </div>
+      </td>
+      <td class="form-text" valign="top">
+        Enter the text to replace the search query ('<tal:block replace="request/query" />') with.
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" valign="top">
+        <input type="submit" name="manage_performReplaceSelected:method" value="Replace selected" class="form-element" />
+        <input type="submit" name="manage_performReplaceAll:method" value="Replace all" class="form-element" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</form>
+
+<h1 tal:replace="structure here/manage_page_footer">Footer</h1>
