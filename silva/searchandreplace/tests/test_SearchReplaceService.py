@@ -194,16 +194,16 @@ class ServiceSearchReplaceTestCase(SilvaTestCase.SilvaTestCase):
 
 @ZopeLiteLayerSetup
 def installService():
-    installPackage('silva.searchandreplace')
-
     # Load our ZCML, which add the extension as a Product
     from silva import searchandreplace
     zcml.load_config('configure.zcml', searchandreplace)
 
+    installPackage('silva.searchandreplace')
+
+
+installService()
 
 def test_suite():
-    installService()
-
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(ServiceSearchReplaceTestCase))
     return suite
