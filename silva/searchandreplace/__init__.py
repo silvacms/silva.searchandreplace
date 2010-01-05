@@ -1,11 +1,9 @@
+# Copyright (c) 2009-2010 Infrae. All rights reserved.
+# See also LICENSE.txt
+# $Id$
 
+from silva.core import conf as silvaconf
 
-def initialize(context):
-    import SearchReplaceService
-
-    context.registerClass(
-        SearchReplaceService.ServiceSearchReplace,
-        constructors = (
-            SearchReplaceService.manage_addServiceSearchReplaceForm,
-            SearchReplaceService.manage_addServiceSearchReplace),
-        icon = 'searchreplaceservice.png')
+silvaconf.extensionName('silva.searchandreplace')
+silvaconf.extensionTitle('Silva Search and Replace')
+silvaconf.extensionSystem()

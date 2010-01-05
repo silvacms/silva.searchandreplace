@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '2.1dev'
+version = '2.2dev'
 
 setup(name='silva.searchandreplace',
       version=version,
@@ -26,5 +26,9 @@ setup(name='silva.searchandreplace',
       install_requires=[
         'setuptools',
         'lxml',
+        'silva.core.interfaces',
+        'silva.core.services',
+        'silva.core.conf',
+        'Products.Silva >= 2.2dev',
         ],
       )

@@ -1,29 +1,42 @@
+# Copyright (c) 2009-2010 Infrae. All rights reserved.
+# See also LICENSE.txt
+# $Id$
+
 import re
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Globals import InitializeClass
-from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zope.interface import implements
 
 from Products.Silva.helpers import add_and_edit
-from Products.Silva.interfaces import IContainer, IContent, IVersionedContent
+from silva.core.interfaces import IContainer, IContent, IVersionedContent
+from silva.core.interfaces.service import ISilvaLocalService
+from silva.core.services.base import SilvaService
+from silva.core import conf as silvaconf
 
 from ZTUtils import Batch
+
 
 class FindRootError(Exception):
     """ raised on invalid traversal to the root
     """
 
-class ServiceSearchReplace(SimpleItem):
+
+class ServiceSearchReplace(SilvaService):
     security = ClassSecurityInfo()
 
     meta_type = 'Silva Search and Replace Service'
 
     manage_options = (
         {'label': 'Edit', 'action':'manage_editForm'},
-        ) + SimpleItem.manage_options
+        ) + SilvaService.manage_options
+
+    implements(ISilvaLocalService)
+    silvaconf.icon('searchreplaceservice.png')
+    silvaconf.factory('manage_addServiceSearchReplaceForm')
+    silvaconf.factory('manage_addServiceSearchReplace')
 
     security.declareProtected('View management screens', 'manage_editForm')
     manage_editForm = PageTemplateFile(
@@ -32,10 +45,6 @@ class ServiceSearchReplace(SimpleItem):
 
     security.declareProtected('View management screens', 'manage_main')
     manage_main = manage_editForm
-
-    def __init__(self, id, title):
-        self.id = id
-        self.title = title
 
     security.declareProtected(
         'View management screens', 'manage_performSearch')
@@ -313,6 +322,5 @@ def manage_addServiceSearchReplace(
         self, id='service_search_replace', title='', REQUEST=None):
     """add service to the ZODB"""
     id = self._setObject(id, ServiceSearchReplace(id, unicode(title, 'UTF-8')))
-    service = getattr(self, id)
     add_and_edit(self, id, REQUEST)
     return ''

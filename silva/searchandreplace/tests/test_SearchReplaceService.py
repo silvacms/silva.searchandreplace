@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Infrae. All rights reserved.
+# Copyright (c) 2009-2010 Infrae. All rights reserved.
 # See also LICENSE.txt
-# $Id: test_SearchReplaceService.py 32946 2009-01-12 16:26:47Z sylvain $
+# $Id$
 
 from lxml import etree
 from xml.dom.minidom import parseString
@@ -199,7 +199,6 @@ def installService():
     zcml.load_config('configure.zcml', searchandreplace)
 
     installPackage('silva.searchandreplace')
-
 
 installService()
 
