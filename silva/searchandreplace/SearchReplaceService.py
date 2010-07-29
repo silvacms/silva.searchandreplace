@@ -6,7 +6,7 @@ import re
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
-from Globals import InitializeClass
+from App.class_init import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zope.interface import implements
 
@@ -49,7 +49,7 @@ class ServiceSearchReplace(SilvaService):
     security.declareProtected(
         'View management screens', 'manage_performSearch')
     def manage_performSearch(self, REQUEST):
-        """ zope sux 
+        """ zope sux
         """
         query = REQUEST['query']
         search_targets = REQUEST.get('search_targets')
@@ -97,7 +97,7 @@ class ServiceSearchReplace(SilvaService):
     security.declareProtected(
         'View management screens', 'manage_performReplaceSelected')
     def manage_performReplaceSelected(self, REQUEST):
-        """ zope sux 
+        """ zope sux
         """
         paths = REQUEST.get('paths', [])
         sessdata = REQUEST.SESSION['search_replace_data']
@@ -110,7 +110,7 @@ class ServiceSearchReplace(SilvaService):
     security.declareProtected(
         'View management screens', 'manage_performReplaceAll')
     def manage_performReplaceAll(self, REQUEST):
-        """ zope sux 
+        """ zope sux
         """
         sessdata = REQUEST.SESSION['search_replace_data']
         occurrences = self.replace_paths(
@@ -161,7 +161,7 @@ class ServiceSearchReplace(SilvaService):
             occurrences += self._perform_replace(
                 path, query, replacement, ignore_case, search_targets)
         return occurrences
-            
+
     def _perform_replace(
             self, path, query, replacement, ignore_case, search_targets):
         obj = self.restrictedTraverse(path.split('/'))
