@@ -57,7 +57,7 @@
             </div>
           </td>
           <td class="form-text" valign="top">
-            The root of the publication or folder to start the search. Leave empty to search the whole Silva instance.
+            The root of the publication or folder to start the search. Leave empty to search the whole Silva instance. If the instance is large such a <b>search will affect performance!</b>
           </td>
         </tr>
         <tr>
@@ -92,7 +92,12 @@
             </div>
           </td>
           <td class="form-text" valign="top">
-            Controls what parts of objects are searched - 'text' makes that all displayed text, including XML attributes that are displayed to the user, are searched and replaced, 'paths' makes that all <em>internal</em> paths in XML attributes of images and paths (path, url, link) are searched and replaced, 'urls' makes that all <em>external</em> URLs in XML attributes of links (iow URLs to external web pages, email URLs, etc.) are searched and replaced.
+            Text contents<br/>
+            Means that all visible text, including attributes that are displayed to the user, is searched and replaced. This field is enabled/checked by default.<br/>
+            External links<br/>
+            All external URLs in attributes of links (in other words URLs to external web pages, email mailtos, etc.) are searched and replaced.<br/>
+            Paths<br/>
+            Means that all internal paths in XML attributes of images and paths (path, url, link) are searched and replaced.
           </td>
         </tr>
         <tr>
