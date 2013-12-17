@@ -5,7 +5,7 @@ version = '2.2.1dev'
 
 setup(name='silva.searchandreplace',
       version=version,
-      description="Search in all Silva Documents and replace information",
+      description="Search in all Silva documents and replace information in Silva 2.x",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
@@ -17,7 +17,7 @@ setup(name='silva.searchandreplace',
       keywords='silva silvadocument search replace service',
       author='Guido Wesdorp',
       author_email='info@infrae.com',
-      url='https://infrae.com/products/silva',
+      url='https://github.com/silvacms/silva.searchandreplace',
       license='BSD',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['silva'],
