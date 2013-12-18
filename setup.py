@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '2.1'
+version = '2.1.1dev'
 
 setup(name='silva.searchandreplace',
       version=version,
@@ -17,7 +17,7 @@ setup(name='silva.searchandreplace',
       keywords='silva silvadocument search replace service',
       author='Guido Wesdorp',
       author_email='info@infrae.com',
-      url='',
+      url='https://github.com/silvacms/silva.searchandreplace',
       license='BSD',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['silva'],
