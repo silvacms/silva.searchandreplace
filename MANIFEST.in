@@ -1,0 +1,3 @@
+recursive-include silva *.py *.zcml *.zpt *.png
+recursive-include docs *.txt
+include README.txt
